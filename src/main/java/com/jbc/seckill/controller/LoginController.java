@@ -6,6 +6,8 @@ import javax.validation.Valid;
 import com.jbc.seckill.redis.RedisService;
 import com.jbc.seckill.result.CodeMsg;
 import com.jbc.seckill.result.Result;
+import com.jbc.seckill.service.MiaoshaUserService;
+import com.jbc.seckill.utils.ValidatorUtil;
 import com.jbc.seckill.vo.LoginVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,8 +24,8 @@ public class LoginController {
 
 	private static Logger log = LoggerFactory.getLogger(LoginController.class);
 	
-	/*@Autowired
-	MiaoshaUserService userService;*/
+	@Autowired
+    MiaoshaUserService userService;
 	
 	@Autowired
     RedisService redisService;
@@ -35,25 +37,25 @@ public class LoginController {
     
     @RequestMapping("/do_login")
     @ResponseBody
-    public Result<Boolean> doLogin(LoginVo loginVo, HttpServletResponse response) {
-    	/*log.info(loginVo.toString());
-    	//登录
-    	userService.login(response, loginVo);
-    	return Result.success(true);*/
+    public Result<Boolean> doLogin(@Valid LoginVo loginVo, HttpServletResponse response) {
+
     	String mobile = loginVo.getMobile();
     	String password = loginVo.getPassword();
-    	if(StringUtils.isEmpty(mobile)){
+    	//交给参数校验
+    	/*if(StringUtils.isEmpty(mobile)){
     	    return Result.error(CodeMsg.MOBILE_EMPTY);
         }
         if(StringUtils.isEmpty(password)){
-
+            return Result.error(CodeMsg.PASSWORD_EMPTY);
         }
+        if(!ValidatorUtil.isMobile(mobile)){
+            return Result.error(CodeMsg.MOBILE_ERROR);
+        }*/
 
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return Result.success(true);
+        //登录
+       userService.login(loginVo);
+       return Result.success(true);
     }
+
+
 }

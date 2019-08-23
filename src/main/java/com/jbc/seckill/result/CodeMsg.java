@@ -44,10 +44,16 @@ public class CodeMsg {
 		this.msg = msg;
 	}
 	
-	public CodeMsg fillArgs(Object... args) {
+	/*public CodeMsg fillArgs(Object... args) {
 		int code = this.code;
 		String message = String.format(this.msg, args);
 		return new CodeMsg(code, message);
+	}*/
+
+	public CodeMsg fillArgs(Object... args) {
+		String message = String.format(this.msg, args);
+		this.msg = message;
+		return this;
 	}
 
 	@Override
