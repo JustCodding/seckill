@@ -32,15 +32,24 @@ public class GoodsController {
 
 
 	
-    @RequestMapping("/to_list")
+    /*@RequestMapping("/to_list")
     //从cookie中取token,为兼容移动端(从请求中传过来)增加从请求参数中农获取token
     public String toLogin(Model model,@CookieValue(value = MiaoshaUserService.COOKIE_NAME_TOKEN,required = false) String cookieToken,
-                          @RequestParam(value = MiaoshaUserService.COOKIE_NAME_TOKEN,required = false) String paramToken) {
+                          @RequestParam(value = MiaoshaUserService.COOKIE_NAME_TOKEN,required = false) String paramToken,HttpServletResponse response) {
         if(StringUtils.isEmpty(cookieToken)&&StringUtils.isEmpty(paramToken)){
             return "login";
         }
         String token = StringUtils.isEmpty(paramToken)?cookieToken:cookieToken;
-        MiaoshaUser user = userService.getUserByToken(token);
+        MiaoshaUser user = userService.getUserByToken(token,response);
+        model.addAttribute("user",user);
+        return "goods_list";
+    }*/
+
+    @RequestMapping("/to_list")
+    public String toLogin(Model model,MiaoshaUser user) {
+        if(user==null){
+            return "login";
+        }
         model.addAttribute("user",user);
         return "goods_list";
     }

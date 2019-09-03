@@ -9,9 +9,9 @@ import com.jbc.seckill.result.CodeMsg;
 import com.jbc.seckill.utils.MD5Util;
 import com.jbc.seckill.utils.UUIDUtil;
 import com.jbc.seckill.vo.LoginVo;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
@@ -37,17 +37,30 @@ public class MiaoshaUserService {
 		}
 
 		//登录验证成功  生成cookie
+		addCookie(response, user);
+		return true;
+	}
+
+	private void addCookie(HttpServletResponse response, MiaoshaUser user) {
 		String token = UUIDUtil.uuid();
 		redisService.set(MiaoshaUserKey.token,token,user);
 		Cookie cookie = new Cookie(COOKIE_NAME_TOKEN,token);
 		cookie.setMaxAge(MiaoshaUserKey.token.expireSeconds());
 		cookie.setPath("/");
 		response.addCookie(cookie);
-
-		return true;
 	}
 
-	public MiaoshaUser getUserByToken(String token) {
-		return redisService.get(MiaoshaUserKey.token,token,MiaoshaUser.class);
+	public MiaoshaUser getUserByToken(String token,HttpServletResponse response) {
+		if(StringUtils.isEmpty(token)){
+			return null;
+		}
+		MiaoshaUser user =  redisService.get(MiaoshaUserKey.token,token,MiaoshaUser.class);
+		//重新设置cookie 这样就相当于延长了cookie的有效期
+		if(user!=null){
+			redisService.removeKey(MiaoshaUserKey.token,token);
+			addCookie(response,user);
+		}
+
+		return user;
 	}
 }

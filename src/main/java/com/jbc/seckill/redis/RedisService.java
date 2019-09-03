@@ -96,6 +96,19 @@ public class RedisService {
         }
     }
 
+    public void removeKey(KeyPrefix prefix, String key){
+        Jedis jedis = null;
+        try {
+            jedis =  jedisPool.getResource();
+            //生成真正的key
+            String realKey  = prefix.getPrefix() + key;
+            jedis.del(realKey);
+        }finally {
+            returnToPool(jedis);
+        }
+    }
+
+
 
     public <T> T stringToBean(String str,Class<T> clazz){
         if(str==null||str.length()<=0||clazz==null){
