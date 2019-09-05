@@ -4,7 +4,9 @@ import com.jbc.seckill.domain.MiaoshaUser;
 import com.jbc.seckill.redis.MiaoshaUserKey;
 import com.jbc.seckill.redis.RedisService;
 import com.jbc.seckill.result.Result;
+import com.jbc.seckill.service.GoodsService;
 import com.jbc.seckill.service.MiaoshaUserService;
+import com.jbc.seckill.vo.GoodsVo;
 import com.jbc.seckill.vo.LoginVo;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.util.List;
 
 
 @Controller
@@ -29,6 +32,9 @@ public class GoodsController {
 	
 	@Autowired
     MiaoshaUserService userService;
+
+	@Autowired
+	private GoodsService goodsService;
 
 
 	
@@ -50,6 +56,10 @@ public class GoodsController {
         if(user==null){
             return "login";
         }
+
+        List<GoodsVo> goodsList = goodsService.getMiaoshaGoods();
+
+        model.addAttribute("goodsList",goodsList);
         model.addAttribute("user",user);
         return "goods_list";
     }
