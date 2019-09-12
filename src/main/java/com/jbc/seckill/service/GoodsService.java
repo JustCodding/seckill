@@ -15,4 +15,8 @@ public class GoodsService {
     public List<GoodsVo> getMiaoshaGoods(){
         return goodsDao.listGoodsVo();
     }
+
+    public GoodsVo getMiaoshaGoodByid(long id) {
+        return goodsDao.getMiaoshaGoodByid(id);
+    }
 }
