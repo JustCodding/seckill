@@ -19,4 +19,9 @@ public class GoodsService {
     public GoodsVo getMiaoshaGoodByid(long id) {
         return goodsDao.getMiaoshaGoodByid(id);
     }
+
+    public void reduceStock(GoodsVo goodsVo) {
+        goodsDao.reduceStock(goodsVo.getId());
+    }
+
 }
