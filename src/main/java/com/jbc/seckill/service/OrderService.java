@@ -22,7 +22,7 @@ public class OrderService {
     private OrderDao orderdao;
 
 
-    public MiaoshaOrder getMiaoshaOrder(Long userid, long goodsId) {
+    public MiaoshaOrder getMiaoshaOrder(long userid, long goodsId) {
         return orderdao.getMiaoshaOrder(userid,goodsId);
     }
 

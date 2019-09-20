@@ -63,7 +63,7 @@ public class MiaoshaController {
 
         //减库存，下订单，写入秒杀订单(要在一个事务中)
         OrderInfo orderinfo = miaoshaService.miaosha(user,goodsVo);
-        model.addAttribute("orderinfo",orderinfo);
+        model.addAttribute("orderInfo",orderinfo);
         model.addAttribute("goods",goodsVo);
         model.addAttribute("user",user);
         return "order_detail";

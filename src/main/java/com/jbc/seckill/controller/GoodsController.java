@@ -50,9 +50,9 @@ public class GoodsController {
 
     @RequestMapping("/to_list")
     public String toList(Model model,MiaoshaUser user) {
-        if(user==null){
+        /*if(user==null){
             return "login";
-        }
+        }*/
 
         List<GoodsVo> goodsList = goodsService.getMiaoshaGoods();
 

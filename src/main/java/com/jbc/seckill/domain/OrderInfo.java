@@ -80,4 +80,6 @@ public class OrderInfo {
 	public void setPayDate(Date payDate) {
 		this.payDate = payDate;
 	}
+
+
 }
