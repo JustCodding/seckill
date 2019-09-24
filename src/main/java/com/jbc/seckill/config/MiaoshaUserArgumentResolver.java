@@ -36,7 +36,7 @@ public class MiaoshaUserArgumentResolver implements HandlerMethodArgumentResolve
         if(StringUtils.isEmpty(cookieToken)&&StringUtils.isEmpty(paramToken)){
             return null;
         }
-        String token = StringUtils.isEmpty(paramToken)?cookieToken:cookieToken;
+        String token = StringUtils.isEmpty(paramToken)?cookieToken:paramToken;
         MiaoshaUser user = userService.getUserByToken(token,response);
         return user;
     }

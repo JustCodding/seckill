@@ -1,6 +1,7 @@
 package com.jbc.seckill.controller;
 
 import com.jbc.seckill.domain.MiaoshaUser;
+import com.jbc.seckill.redis.GoodsKey;
 import com.jbc.seckill.redis.MiaoshaUserKey;
 import com.jbc.seckill.redis.RedisService;
 import com.jbc.seckill.result.Result;
@@ -15,7 +16,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.thymeleaf.context.WebContext;
+import org.thymeleaf.spring4.context.SpringContextUtils;
+import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.List;
@@ -33,6 +38,11 @@ public class GoodsController {
 	@Autowired
 	private GoodsService goodsService;
 
+	@Autowired
+	private RedisService redisService;
+
+    @Autowired
+    ThymeleafViewResolver thymeleafViewResolver;
 
 	
     /*@RequestMapping("/to_list")
@@ -48,25 +58,47 @@ public class GoodsController {
         return "goods_list";
     }*/
 
-    @RequestMapping("/to_list")
-    public String toList(Model model,MiaoshaUser user) {
+    //QTP:150/s  1000*10  页面缓存后QTP:615/s
+    @RequestMapping(value="/to_list",produces = "text/html")
+    @ResponseBody
+    public String toList(HttpServletRequest request,HttpServletResponse response,Model model, MiaoshaUser user) {
         /*if(user==null){
             return "login";
         }*/
 
-        List<GoodsVo> goodsList = goodsService.getMiaoshaGoods();
-
-        model.addAttribute("goodsList",goodsList);
-        model.addAttribute("user",user);
-        return "goods_list";
-    }
-
-    @RequestMapping("/to_detail/{id}")
-    public String toGoodDetail(Model model,MiaoshaUser user,@PathVariable("id") long id) {
-        if(user==null){
-            return "login";
+        //拿缓存页面
+        String html = redisService.get(GoodsKey.goodsList,"",String.class);
+        if(StringUtils.isNotEmpty(html)){
+            return html;
         }
 
+        List<GoodsVo> goodsList = goodsService.getMiaoshaGoods();
+        model.addAttribute("goodsList",goodsList);
+        model.addAttribute("user",user);
+
+        //手动渲染
+        WebContext wtx = new WebContext(request,response,request.getServletContext(),
+                request.getLocale(),model.asMap());
+        html = thymeleafViewResolver.getTemplateEngine().process("goods_list",wtx);
+        if(StringUtils.isNotEmpty(html)){
+            redisService.set(GoodsKey.goodsList,"",html);
+        }
+
+        return html;
+        //return "goods_list";
+    }
+
+    @RequestMapping(value="/to_detail/{id}",produces = "text/html")
+    @ResponseBody
+    public String toGoodDetail(HttpServletRequest request,HttpServletResponse response,Model model,MiaoshaUser user,@PathVariable("id") long id) {
+        /*if(user==null){
+            return "login";
+        }*/
+        //拿缓存页面
+        String html = redisService.get(GoodsKey.goodsDetail,id+"",String.class);
+        if(StringUtils.isNotEmpty(html)){
+            return html;
+        }
         GoodsVo goods = goodsService.getMiaoshaGoodByid(id);
         long startAt = goods.getStartDate().getTime();
         long endAt = goods.getEndDate().getTime();
@@ -82,12 +114,20 @@ public class GoodsController {
             miaoshaStatus = 1;
             remainSeconds = 0;
         }
-
         model.addAttribute("goods",goods);
         model.addAttribute("user",user);
         model.addAttribute("miaoshaStatus",miaoshaStatus);
         model.addAttribute("remainSeconds",remainSeconds);
-        return "goods_detail";
+
+        //手动渲染
+        WebContext wtx = new WebContext(request,response,request.getServletContext(),
+                request.getLocale(),model.asMap());
+        html = thymeleafViewResolver.getTemplateEngine().process("goods_detail",wtx);
+        if(StringUtils.isNotEmpty(html)){
+            redisService.set(GoodsKey.goodsDetail,id+"",html);
+        }
+        return html;
+        //return "goods_detail";
     }
     
 

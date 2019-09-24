@@ -37,7 +37,7 @@ public class LoginController {
     
     @RequestMapping("/do_login")
     @ResponseBody
-    public Result<Boolean> doLogin(@Valid LoginVo loginVo, HttpServletResponse response) {
+    public Result<String> doLogin(@Valid LoginVo loginVo, HttpServletResponse response) {
 
     	String mobile = loginVo.getMobile();
     	String password = loginVo.getPassword();
@@ -53,8 +53,8 @@ public class LoginController {
         }*/
 
         //登录
-       userService.login(response,loginVo);
-       return Result.success(true);
+       String token = userService.login(response,loginVo);
+       return Result.success(token);
     }
 
 

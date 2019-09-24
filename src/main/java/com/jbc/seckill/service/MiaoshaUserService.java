@@ -25,8 +25,8 @@ public class MiaoshaUserService {
 
 	public static final String COOKIE_NAME_TOKEN = "token";
 
-	public boolean login(HttpServletResponse response,LoginVo loginvo){
-		MiaoshaUser user = miaoshaUserDao.getById(Long.valueOf(loginvo.getMobile()));
+	public String login(HttpServletResponse response,LoginVo loginvo){
+		MiaoshaUser user = getById(Long.valueOf(loginvo.getMobile()));
 		if(user==null){
 			throw new GlobalException(CodeMsg.MOBILE_NOT_EXIST);
 		}else {
@@ -38,7 +38,7 @@ public class MiaoshaUserService {
 		String token = UUIDUtil.uuid();
 		//登录验证成功  生成cookie
 		addCookie(response,token, user);
-		return true;
+		return token;
 	}
 
 	private void addCookie(HttpServletResponse response,String token, MiaoshaUser user) {
@@ -63,4 +63,20 @@ public class MiaoshaUserService {
 
 		return user;
 	}
+
+
+	public MiaoshaUser getById(long userid){
+		//先拿缓存
+		MiaoshaUser user = redisService.get(MiaoshaUserKey.getByid,""+userid,MiaoshaUser.class);
+		if(user!=null){
+			return user;
+		}
+		//读数据库
+		user = miaoshaUserDao.getById(userid);
+		if(user!=null){
+			redisService.set(MiaoshaUserKey.getByid,""+userid,user);
+		}
+		return user;
+	}
+
 }

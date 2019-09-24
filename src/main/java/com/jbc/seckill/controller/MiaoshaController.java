@@ -42,7 +42,7 @@ public class MiaoshaController {
 
 
 
-
+    //QTP:178/s  1000*10
     @RequestMapping("/do_miaosha")
     public String miaosha(Model model,MiaoshaUser user,long goodsId) {
         if(user==null){
