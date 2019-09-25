@@ -1,8 +1,11 @@
 package com.jbc.seckill.service;
 
+import com.jbc.seckill.domain.MiaoshaOrder;
 import com.jbc.seckill.domain.MiaoshaUser;
 import com.jbc.seckill.domain.OrderInfo;
 import com.jbc.seckill.mapper.GoodsDao;
+import com.jbc.seckill.redis.OrderKey;
+import com.jbc.seckill.redis.RedisService;
 import com.jbc.seckill.vo.GoodsVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +19,7 @@ public class MiaoshaService {
     private GoodsService goodsService;
     @Autowired
     private OrderService orderService;
+
     @Transactional
     public OrderInfo miaosha(MiaoshaUser user, GoodsVo goodsVo) {
         //减库存，下订单，写入秒杀订单

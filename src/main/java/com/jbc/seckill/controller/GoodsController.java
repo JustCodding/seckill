@@ -7,6 +7,7 @@ import com.jbc.seckill.redis.RedisService;
 import com.jbc.seckill.result.Result;
 import com.jbc.seckill.service.GoodsService;
 import com.jbc.seckill.service.MiaoshaUserService;
+import com.jbc.seckill.vo.GoodsDetailVo;
 import com.jbc.seckill.vo.GoodsVo;
 import com.jbc.seckill.vo.LoginVo;
 import org.apache.commons.lang3.StringUtils;
@@ -59,6 +60,7 @@ public class GoodsController {
     }*/
 
     //QTP:150/s  1000*10  页面缓存后QTP:615/s
+    //采用页面缓存
     @RequestMapping(value="/to_list",produces = "text/html")
     @ResponseBody
     public String toList(HttpServletRequest request,HttpServletResponse response,Model model, MiaoshaUser user) {
@@ -88,9 +90,10 @@ public class GoodsController {
         //return "goods_list";
     }
 
-    @RequestMapping(value="/to_detail/{id}",produces = "text/html")
+    //采用页面缓存
+    @RequestMapping(value="/to_detail2/{id}",produces = "text/html")
     @ResponseBody
-    public String toGoodDetail(HttpServletRequest request,HttpServletResponse response,Model model,MiaoshaUser user,@PathVariable("id") long id) {
+    public String toGoodDetail2(HttpServletRequest request,HttpServletResponse response,Model model,MiaoshaUser user,@PathVariable("id") long id) {
         /*if(user==null){
             return "login";
         }*/
@@ -129,7 +132,44 @@ public class GoodsController {
         return html;
         //return "goods_detail";
     }
-    
+
+
+    //采用页面静态化，动静分离，不是返回整个页面，而只是返回页面需要的数据
+    @RequestMapping(value="/to_detail/{id}")
+    @ResponseBody
+    public Result<GoodsDetailVo> toGoodDetail(Model model,MiaoshaUser user,@PathVariable("id") long id) {
+        /*if(user==null){
+            return "login";
+        }*/
+
+        GoodsVo goods = goodsService.getMiaoshaGoodByid(id);
+        long startAt = goods.getStartDate().getTime();
+        long endAt = goods.getEndDate().getTime();
+        long now = System.currentTimeMillis();
+        int miaoshaStatus = 0;
+        int remainSeconds = 0;
+        if(now<startAt){//秒杀还没开始
+            remainSeconds = (int)(startAt-now)/1000;
+        }else if(now>endAt){//秒杀已经结束
+            miaoshaStatus = 2;
+            remainSeconds = -1;
+        }else {//秒杀进行中
+            miaoshaStatus = 1;
+            remainSeconds = 0;
+        }
+        model.addAttribute("goods",goods);
+        model.addAttribute("user",user);
+        model.addAttribute("miaoshaStatus",miaoshaStatus);
+        model.addAttribute("remainSeconds",remainSeconds);
+
+        GoodsDetailVo goodsDetailVo = new GoodsDetailVo();
+        goodsDetailVo.setGoods(goods);
+        goodsDetailVo.setUser(user);
+        goodsDetailVo.setMiaoshaStatus(miaoshaStatus);
+        goodsDetailVo.setRemainSeconds(remainSeconds);
+
+      return  Result.success(goodsDetailVo);
+    }
 
 
 

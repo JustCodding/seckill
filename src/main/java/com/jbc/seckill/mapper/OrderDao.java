@@ -18,4 +18,6 @@ public interface OrderDao {
     long createOrder(OrderInfo order);
 	@Insert("insert into miaosha_order(user_id,order_id,goods_id)values(#{userId},#{orderId},#{goodsId})")
 	void createMiaoshaOrder(MiaoshaOrder miaoshaOrder);
+	@Select("select * from order_info where id=#{orderid}")
+    OrderInfo getOrderById(long orderid);
 }

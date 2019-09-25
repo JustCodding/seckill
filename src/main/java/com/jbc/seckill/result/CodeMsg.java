@@ -16,11 +16,12 @@ public class CodeMsg {
 	public static CodeMsg MOBILE_ERROR = new CodeMsg(500213, "手机号格式错误");
 	public static CodeMsg MOBILE_NOT_EXIST = new CodeMsg(500214, "手机号不存在");
 	public static CodeMsg PASSWORD_ERROR = new CodeMsg(500215, "密码错误");
+	public static CodeMsg USER_NOT_LOGIN = new CodeMsg(500216, "用户未登录");
 	
 	//商品模块 5003XX
 	
 	//订单模块 5004XX
-	
+	public static CodeMsg ORDER_NOT_EXIST = new CodeMsg(500400, "没有该订单");
 	//秒杀模块 5005XX
 	public static CodeMsg MIAO_SHA_OVER = new CodeMsg(500500, "商品秒杀完毕");
 	public static CodeMsg MIAO_SHA_REPEATE = new CodeMsg(500501, "商品已经秒杀过");
