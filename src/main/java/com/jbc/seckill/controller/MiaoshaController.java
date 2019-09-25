@@ -65,6 +65,9 @@ public class MiaoshaController {
         /*model.addAttribute("orderInfo",orderinfo);
         model.addAttribute("goods",goodsVo);
         model.addAttribute("user",user);*/
+        if(orderinfo==null){
+            return Result.error(CodeMsg.MIAO_SHA_OVER);
+        }
 
         return Result.success(orderinfo);
     }

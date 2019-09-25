@@ -20,8 +20,8 @@ public class GoodsService {
         return goodsDao.getMiaoshaGoodByid(id);
     }
 
-    public void reduceStock(GoodsVo goodsVo) {
-        goodsDao.reduceStock(goodsVo.getId());
+    public int reduceStock(GoodsVo goodsVo) {
+        return goodsDao.reduceStock(goodsVo.getId());
     }
 
 }
