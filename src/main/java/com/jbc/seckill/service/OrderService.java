@@ -43,10 +43,10 @@ public class OrderService {
         order.setOrderChannel(1);
         order.setStatus(0);
         order.setUserId(user.getId());
-        Long orderid = orderdao.createOrder(order);
+        orderdao.createOrder(order);
 
         MiaoshaOrder miaoshaOrder = new MiaoshaOrder();
-        miaoshaOrder.setOrderId(orderid);
+        miaoshaOrder.setOrderId(order.getId());
         miaoshaOrder.setGoodsId(goodsVo.getId());
         miaoshaOrder.setUserId(user.getId());
         orderdao.createMiaoshaOrder(miaoshaOrder);
